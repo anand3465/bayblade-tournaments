@@ -24,8 +24,10 @@ export default async function Navbar() {
 
         <div className="flex items-center gap-6 text-sm">
           <Link href="/tournaments">Tournaments</Link>
+          <Link href="/builds">Builds</Link>
 
           {userId && <Link href="/dashboard">Dashboard</Link>}
+          {userId && <Link href="/dashboard/builds">My Builds</Link>}
 
           {isAdmin && (
             <Link href="/admin/tournaments/create">

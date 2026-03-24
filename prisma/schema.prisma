@@ -6,6 +6,25 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PartType {
+  BLADE
+  RATCHET
+  BIT
+}
+
+enum PartStatus {
+  LEGAL
+  LIMITED
+  BANNED
+  UNRELEASED
+}
+
+enum BuildStatus {
+  LEGAL
+  WARNING
+  ILLEGAL
+}
+
 enum Role {
   PLAYER
   EMPLOYEE
@@ -24,15 +43,15 @@ enum BuildVisibility {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  clerkId       String         @unique
-  email         String         @unique
-  username      String         @unique
-  firstName     String?
-  lastName      String?
-  role          Role           @default(PLAYER)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  username  String   @unique
+  firstName String?
+  lastName  String?
+  role      Role     @default(PLAYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tournaments   Tournament[]   @relation("TournamentCreator")
   registrations Registration[]
@@ -40,47 +59,98 @@ model User {
 }
 
 model Tournament {
-  id            String             @id @default(cuid())
-  title         String
-  description   String?
-  location      String?
-  maxPlayers    Int
-  startDate     DateTime
-  status        TournamentStatus   @default(UPCOMING)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id          String           @id @default(cuid())
+  title       String
+  description String?
+  location    String?
+  maxPlayers  Int
+  startDate   DateTime
+  status      TournamentStatus @default(UPCOMING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
-  createdById   String
-  createdBy     User               @relation("TournamentCreator", fields: [createdById], references: [id])
+  createdById String
+  createdBy   User   @relation("TournamentCreator", fields: [createdById], references: [id])
 
   registrations Registration[]
 }
 
 model Registration {
-  id            String      @id @default(cuid())
-  createdAt     DateTime    @default(now())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  userId        String
-  tournamentId  String
+  userId       String
+  tournamentId String
 
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tournament    Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tournamentId])
 }
 
-model Build {
-  id            String           @id @default(cuid())
-  title         String
-  blade         String
-  ratchet       String
-  bit           String
-  type          String?
-  description   String?
-  visibility    BuildVisibility  @default(PUBLIC)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+model Blade {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String
+  spin        String
+  attack      Int
+  defense     Int
+  stamina     Int
+  weight      Float?
+  height      Float?
+  width       Float?
+  description String?
+  createdAt   DateTime @default(now())
 
-  userId        String
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  builds Build[]
+}
+
+model Ratchet {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  attack      Int
+  defense     Int
+  stamina     Int
+  weight      Int
+  speed       Int
+  description String?
+  createdAt   DateTime @default(now())
+
+  builds Build[]
+}
+
+model Bit {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  attack      Int
+  defense     Int
+  stamina     Int
+  weight      Int
+  speed       Int
+  description String?
+  createdAt   DateTime @default(now())
+
+  builds Build[]
+}
+
+model Build {
+  id          String          @id @default(cuid())
+  title       String
+  type        String?
+  description String?
+  visibility  BuildVisibility @default(PUBLIC)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bladeId String
+  blade   Blade  @relation(fields: [bladeId], references: [id])
+
+  ratchetId String
+  ratchet   Ratchet @relation(fields: [ratchetId], references: [id])
+
+  bitId String
+  bit   Bit    @relation(fields: [bitId], references: [id])
 }
