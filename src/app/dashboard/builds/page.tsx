@@ -31,8 +31,8 @@ export default async function MyBuildsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-10 text-white">
-      <div className="mx-auto max-w-6xl">
+    <main className="page-shell">
+      <div className="page-container">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">My Builds</h1>

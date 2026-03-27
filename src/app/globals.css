@@ -1,26 +1,186 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #05070b;
+  --bg-soft: #0b1020;
+  --panel: rgba(15, 23, 42, 0.72);
+  --panel-strong: rgba(10, 15, 28, 0.92);
+  --border: rgba(255, 255, 255, 0.08);
+
+  --text: #f8fafc;
+  --muted: #94a3b8;
+
+  --blue: #38bdf8;
+  --blue-strong: #0ea5e9;
+  --gold: #fbbf24;
+  --red: #ef4444;
+  --green: #22c55e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.14), transparent 28%),
+    radial-gradient(circle at 80% 30%, rgba(251, 191, 36, 0.12), transparent 22%),
+    radial-gradient(circle at 50% 80%, rgba(239, 68, 68, 0.10), transparent 25%),
+    linear-gradient(180deg, #04060a 0%, #070b14 55%, #04060a 100%);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    radial-gradient(circle at center, transparent 0 18%, rgba(255,255,255,0.05) 18.2% 18.6%, transparent 18.8% 31%, rgba(56,189,248,0.05) 31.2% 31.7%, transparent 32%),
+    radial-gradient(circle at center, transparent 0 42%, rgba(255,255,255,0.03) 42.2% 42.5%, transparent 42.8%);
+  animation: arenaPulse 8s ease-in-out infinite;
+}
+
+a {
+  text-decoration: none;
+}
+
+@keyframes arenaPulse {
+  0%, 100% { transform: scale(1); opacity: 0.14; }
+  50% { transform: scale(1.04); opacity: 0.2; }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes glowSweep {
+  0% { transform: translateX(-140%); }
+  100% { transform: translateX(140%); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.page-shell {
+  min-height: calc(100vh - 72px);
+  padding: 2rem 1.25rem 3rem;
+}
+
+.page-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.glass-panel {
+  position: relative;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+  border-radius: 1.5rem;
+}
+
+.glass-panel-strong {
+  border: 1px solid rgba(56, 189, 248, 0.14);
+  background: var(--panel-strong);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(56, 189, 248, 0.04),
+    0 0 28px rgba(56, 189, 248, 0.08);
+  border-radius: 1.5rem;
+}
+
+.bey-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(15,23,42,0.88), rgba(8,11,20,0.95));
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+}
+
+.bey-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(56,189,248,0.18) 50%, transparent 80%);
+  transform: translateX(-140%);
+  pointer-events: none;
+}
+
+.bey-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(56,189,248,0.35);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.38), 0 0 20px rgba(56,189,248,0.10);
+}
+
+.bey-card:hover::before {
+  animation: glowSweep 1s ease;
+}
+
+.bey-title {
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+.bey-subtle {
+  color: var(--muted);
+}
+
+.stat-bar {
+  height: 0.55rem;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  box-shadow: 0 0 12px rgba(56,189,248,0.22);
+  transition: width 260ms ease;
+}
+
+.floating-orb {
+  position: fixed;
+  border-radius: 9999px;
+  filter: blur(8px);
+  pointer-events: none;
+  opacity: 0.18;
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+.orb-blue {
+  width: 180px;
+  height: 180px;
+  background: rgba(56,189,248,0.24);
+}
+
+.orb-gold {
+  width: 120px;
+  height: 120px;
+  background: rgba(251,191,36,0.18);
+}
+
+.orb-red {
+  width: 140px;
+  height: 140px;
+  background: rgba(239,68,68,0.16);
 }

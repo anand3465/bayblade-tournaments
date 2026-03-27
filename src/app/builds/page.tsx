@@ -1,17 +1,39 @@
-import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import PageShell from "@/components/ui/PageShell";
+import SectionHeader from "@/components/ui/SectionHeader";
+import BuildCard from "@/components/builds/BuildCard";
+import Link from "next/link";
 
 export default async function BuildsPage() {
+  const { userId } = await auth();
+
+  let dbUser: { id: string } | null = null;
+
+  if (userId) {
+    dbUser = await prisma.user.findUnique({
+      where: { clerkId: userId },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   const builds = await prisma.build.findMany({
-    where: {
-      visibility: "PUBLIC",
-    },
+    where: dbUser
+      ? {
+          OR: [{ visibility: "PUBLIC" }, { userId: dbUser.id }],
+        }
+      : {
+          visibility: "PUBLIC",
+        },
     orderBy: {
       createdAt: "desc",
     },
     include: {
       user: {
         select: {
+          id: true,
           username: true,
         },
       },
@@ -22,117 +44,63 @@ export default async function BuildsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-10 text-white">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold">Builds</h1>
-            <p className="mt-2 text-zinc-400">
-              Browse public Beyblade builds shared by the community.
-            </p>
-          </div>
+    <PageShell>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <SectionHeader
+          eyebrow="Custom Combos"
+          title="Build Library"
+          subtitle="Browse public builds and your own saved combinations."
+        />
 
-          <Link
-            href="/builds/create"
-            className="rounded-xl bg-blue-600 px-4 py-2 font-medium hover:bg-blue-500"
-          >
-            Create Build
-          </Link>
-        </div>
-
-        {builds.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-zinc-400">
-            No public builds yet.
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {builds.map((build) => {
-              const totalAttack =
-                build.blade.attack + build.ratchet.attack + build.bit.attack;
-
-              const totalDefense =
-                build.blade.defense +
-                build.ratchet.defense +
-                build.bit.defense;
-
-              const totalStamina =
-                build.blade.stamina +
-                build.ratchet.stamina +
-                build.bit.stamina;
-
-              const totalWeight =
-                (build.blade.weight ?? 0) +
-                (build.ratchet.weight ?? 0) +
-                (build.bit.weight ?? 0);
-
-              return (
-                <div
-                  key={build.id}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6"
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-300">
-                      {build.visibility}
-                    </span>
-                    <span className="text-sm text-zinc-400">
-                      by {build.user.username}
-                    </span>
-                  </div>
-
-                  <h2 className="text-2xl font-semibold">{build.title}</h2>
-
-                  {build.type && (
-                    <p className="mt-2 text-sm text-zinc-400">{build.type}</p>
-                  )}
-
-                  <div className="mt-5 space-y-2 text-sm text-zinc-300">
-                    <p>
-                      <span className="font-medium text-white">Blade:</span>{" "}
-                      {build.blade.name}
-                    </p>
-                    <p>
-                      <span className="font-medium text-white">Ratchet:</span>{" "}
-                      {build.ratchet.name}
-                    </p>
-                    <p>
-                      <span className="font-medium text-white">Bit:</span>{" "}
-                      {build.bit.name}
-                    </p>
-                  </div>
-
-                  <div className="mt-5 rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm">
-                    <p className="font-semibold text-white">Combined Stats</p>
-                    <div className="mt-3 space-y-2 text-zinc-300">
-                      <p>
-                        <span className="font-medium text-white">Attack:</span>{" "}
-                        {totalAttack}
-                      </p>
-                      <p>
-                        <span className="font-medium text-white">Defense:</span>{" "}
-                        {totalDefense}
-                      </p>
-                      <p>
-                        <span className="font-medium text-white">Stamina:</span>{" "}
-                        {totalStamina}
-                      </p>
-                      <p>
-                        <span className="font-medium text-white">Weight:</span>{" "}
-                        {totalWeight.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {build.description && (
-                    <p className="mt-4 text-sm text-zinc-400">
-                      {build.description}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <Link
+          href="/builds/create"
+          className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-300 transition hover:border-cyan-300/60 hover:bg-cyan-400/20 hover:text-cyan-200"
+        >
+          Add Your Beyblade
+        </Link>
       </div>
-    </main>
+
+      {builds.length === 0 ? (
+        <div className="glass-panel p-8 text-slate-400">
+          No builds yet.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {builds.map((build, index) => {
+            const totalAttack =
+              build.blade.attack + build.ratchet.attack + build.bit.attack;
+            const totalDefense =
+              build.blade.defense + build.ratchet.defense + build.bit.defense;
+            const totalStamina =
+              build.blade.stamina + build.ratchet.stamina + build.bit.stamina;
+            const totalWeight =
+              (build.blade.weight ?? 0) +
+              (build.ratchet.weight ?? 0) +
+              (build.bit.weight ?? 0);
+            const totalSpeed = build.bit.speed ?? 0;
+
+            return (
+              <BuildCard
+                key={build.id}
+                name={build.title}
+                blade={build.blade.name}
+                ratchet={build.ratchet.name}
+                bit={build.bit.name}
+                type={build.type ?? "Balance"}
+                visibility={build.visibility}
+                attack={totalAttack}
+                defense={totalDefense}
+                stamina={totalStamina}
+                weight={totalWeight}
+                speed={totalSpeed}
+                ownerName={build.user.username}
+                isOwner={build.user.id === dbUser?.id}
+                delay={index * 0.05}
+              />
+            );
+          })}
+        </div>
+      )}
+    </PageShell>
   );
 }

@@ -11,6 +11,9 @@ function getBuildType(stats: {
 }) {
   const { attack, defense, stamina } = stats;
 
+  const sorted = [attack, defense, stamina].sort((a, b) => b - a);
+
+  if (sorted[0] - sorted[1] <= 2) return "Balance";
   if (attack >= defense && attack >= stamina) return "Attack";
   if (defense >= attack && defense >= stamina) return "Defense";
   return "Stamina";
@@ -76,5 +79,5 @@ export async function createBuild(formData: FormData) {
     },
   });
 
-  redirect("/dashboard/builds");
+  redirect("/dashboard");
 }

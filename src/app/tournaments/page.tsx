@@ -1,24 +1,10 @@
-import Link from "next/link";
+import PageShell from "@/components/ui/PageShell";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
-
-type TournamentWithCounts = Prisma.TournamentGetPayload<{
-  include: {
-    _count: {
-      select: {
-        registrations: true;
-      };
-    };
-    createdBy: {
-      select: {
-        username: true;
-      };
-    };
-  };
-}>;
+import TournamentCard from "@/components/tournaments/TournamentCard";
 
 export default async function TournamentsPage() {
-  const tournaments: TournamentWithCounts[] = await prisma.tournament.findMany({
+  const tournaments = await prisma.tournament.findMany({
     orderBy: {
       startDate: "asc",
     },
@@ -37,85 +23,36 @@ export default async function TournamentsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-6 py-10 text-white">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold">Tournaments</h1>
-            <p className="mt-2 text-zinc-400">
-              Browse upcoming Beyblade events and register.
-            </p>
-          </div>
+    <PageShell>
+      <SectionHeader
+        eyebrow="Arena Events"
+        title="Tournaments"
+        subtitle="Browse upcoming battles, track capacity, and enter the arena."
+      />
 
-          <Link
-            href="/admin/tournaments/create"
-            className="rounded-xl bg-blue-600 px-4 py-2 font-medium hover:bg-blue-500"
-          >
-            Create Tournament
-          </Link>
+      {tournaments.length === 0 ? (
+        <div className="glass-panel p-8 text-slate-400">
+          No tournaments yet.
         </div>
-
-        {tournaments.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-zinc-400">
-            No tournaments yet.
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {tournaments.map((tournament) => {
-              const spotsLeft =
-                tournament.maxPlayers - tournament._count.registrations;
-
-              return (
-                <Link
-                  key={tournament.id}
-                  href={`/tournaments/${tournament.id}`}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 transition hover:border-zinc-700 hover:bg-zinc-800"
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-300">
-                      {tournament.status}
-                    </span>
-                    <span className="text-sm text-zinc-400">
-                      {tournament._count.registrations}/{tournament.maxPlayers} players
-                    </span>
-                  </div>
-
-                  <h2 className="text-2xl font-semibold">{tournament.title}</h2>
-
-                  {tournament.description && (
-                    <p className="mt-3 line-clamp-3 text-sm text-zinc-400">
-                      {tournament.description}
-                    </p>
-                  )}
-
-                  <div className="mt-5 space-y-2 text-sm text-zinc-300">
-                    <p>
-                      <span className="font-medium text-white">Location:</span>{" "}
-                      {tournament.location || "TBD"}
-                    </p>
-                    <p>
-                      <span className="font-medium text-white">Date:</span>{" "}
-                      {new Date(tournament.startDate).toLocaleString()}
-                    </p>
-                    <p>
-                      <span className="font-medium text-white">Created by:</span>{" "}
-                      {tournament.createdBy.username}
-                    </p>
-                    <p>
-                        <span className="font-medium text-white">Spots left:</span>{" "}
-                        {spotsLeft === 0 ? (
-                            <span className="text-red-400 text-xs">FULL</span>
-                        ) : (
-                            spotsLeft
-                        )}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </main>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {tournaments.map((tournament, index) => (
+            <TournamentCard
+              key={tournament.id}
+              id={tournament.id}
+              title={tournament.title}
+              description={tournament.description}
+              location={tournament.location}
+              startDate={tournament.startDate}
+              status={tournament.status}
+              registrationsCount={tournament._count.registrations}
+              maxPlayers={tournament.maxPlayers}
+              createdByUsername={tournament.createdBy.username}
+              delay={index * 0.05}
+            />
+          ))}
+        </div>
+      )}
+    </PageShell>
   );
 }

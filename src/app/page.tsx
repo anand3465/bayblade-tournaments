@@ -1,65 +1,151 @@
-import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import PageShell from "@/components/ui/PageShell";
+import SectionHeader from "@/components/ui/SectionHeader";
+import HeroSection from "@/components/home/HeroSection";
+import FeatureCards from "@/components/home/FeatureCards";
+import TournamentCard from "@/components/tournaments/TournamentCard";
+import BuildCard from "@/components/builds/BuildCard";
 
-export default function Home() {
+export default async function HomePage() {
+  const [featuredTournaments, featuredBuilds] = await Promise.all([
+    prisma.tournament.findMany({
+      orderBy: { startDate: "asc" },
+      take: 3,
+      include: {
+        createdBy: {
+          select: {
+            username: true,
+          },
+        },
+        _count: {
+          select: {
+            registrations: true,
+          },
+        },
+      },
+    }),
+    prisma.build.findMany({
+      where: { visibility: "PUBLIC" },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+        blade: true,
+        ratchet: true,
+        bit: true,
+      },
+    }),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <PageShell>
+      <div className="space-y-10">
+        <HeroSection />
+
+        <FeatureCards />
+
+        <section className="space-y-6">
+          <div className="flex items-end justify-between gap-4">
+            <SectionHeader
+              eyebrow="Upcoming Battles"
+              title="Featured Tournaments"
+              subtitle="Jump into upcoming events and secure your place in the bracket."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <Link
+              href="/tournaments"
+              className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-400/30 hover:bg-sky-400/10 hover:text-sky-300 md:inline-flex"
+            >
+              View all
+            </Link>
+          </div>
+
+          {featuredTournaments.length === 0 ? (
+            <div className="glass-panel p-8 text-slate-400">
+              No tournaments yet.
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featuredTournaments.map((tournament, index) => (
+                <TournamentCard
+                  key={tournament.id}
+                  id={tournament.id}
+                  title={tournament.title}
+                  description={tournament.description}
+                  location={tournament.location}
+                  startDate={tournament.startDate}
+                  status={tournament.status}
+                  registrationsCount={tournament._count.registrations}
+                  maxPlayers={tournament.maxPlayers}
+                  createdByUsername={tournament.createdBy.username}
+                  delay={index * 0.05}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="space-y-6">
+          <div className="flex items-end justify-between gap-4">
+            <SectionHeader
+              eyebrow="Custom Combos"
+              title="Latest Builds"
+              subtitle="See community builds and discover powerful combinations."
+            />
+            <Link
+              href="/builds"
+              className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-400/30 hover:bg-sky-400/10 hover:text-sky-300 md:inline-flex"
+            >
+              View all
+            </Link>
+          </div>
+
+          {featuredBuilds.length === 0 ? (
+            <div className="glass-panel p-8 text-slate-400">
+              No builds yet.
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {featuredBuilds.map((build, index) => {
+                const totalAttack =
+                  build.blade.attack + build.ratchet.attack + build.bit.attack;
+                const totalDefense =
+                  build.blade.defense + build.ratchet.defense + build.bit.defense;
+                const totalStamina =
+                  build.blade.stamina + build.ratchet.stamina + build.bit.stamina;
+                const totalWeight =
+                  (build.blade.weight ?? 0) +
+                  (build.ratchet.weight ?? 0) +
+                  (build.bit.weight ?? 0);
+                const totalSpeed = build.bit.speed ?? 0;
+
+                return (
+                  <BuildCard
+                    key={build.id}
+                    name={build.title}
+                    blade={build.blade.name}
+                    ratchet={build.ratchet.name}
+                    bit={build.bit.name}
+                    type={build.type ?? "Balance"}
+                    visibility={build.visibility}
+                    attack={totalAttack}
+                    defense={totalDefense}
+                    stamina={totalStamina}
+                    weight={totalWeight}
+                    speed={totalSpeed}
+                    ownerName={build.user.username}
+                    delay={index * 0.05}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
+    </PageShell>
   );
 }
