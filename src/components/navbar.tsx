@@ -35,9 +35,9 @@ export default async function Navbar() {
 
           <div>
             <p className="text-base font-extrabold tracking-tight text-white transition group-hover:text-sky-300">
-              Beyblade X Arena
+              Beyblade X League
             </p>
-            <p className="text-xs text-slate-400">Spin. Build. Battle.</p>
+            <p className="text-xs text-slate-400"> Build. Spin. Battle.</p>
           </div>
         </Link>
 

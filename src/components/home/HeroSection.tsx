@@ -16,7 +16,7 @@ export default function HeroSection() {
         <h1 className="bey-title text-5xl leading-tight text-white sm:text-6xl lg:text-7xl">
           Build the perfect combo.
           <span className="mt-2 block bg-gradient-to-r from-sky-300 via-white to-amber-200 bg-clip-text text-transparent">
-            Enter the arena.
+            Enter the league.
           </span>
         </h1>
 
