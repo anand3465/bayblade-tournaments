@@ -184,3 +184,64 @@ a {
   height: 140px;
   background: rgba(239,68,68,0.16);
 }
+
+/* 3D helpers */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.bey-3d-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  will-change: transform;
+}
+
+.bey-3d-layer-1 {
+  transform: translateZ(18px);
+}
+
+.bey-3d-layer-2 {
+  transform: translateZ(34px);
+}
+
+.bey-3d-layer-3 {
+  transform: translateZ(52px);
+}
+
+.bey-ring {
+  position: absolute;
+  inset: 50%;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.12);
+}
+
+.bey-ring-gold {
+  border-color: rgba(251, 191, 36, 0.24);
+  box-shadow: 0 0 30px rgba(251, 191, 36, 0.12);
+}
+
+.bey-core-spin {
+  animation: spinSlow 4.2s linear infinite;
+}
+
+.bey-core-spin-reverse {
+  animation: spinSlow 2.8s linear infinite reverse;
+}
+
+.bey-float-3d {
+  animation: floatSoft 4.5s ease-in-out infinite;
+}
+
+.bey-shadow-glow {
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.45),
+    0 0 35px rgba(56, 189, 248, 0.12),
+    0 0 16px rgba(251, 191, 36, 0.08);
+}
