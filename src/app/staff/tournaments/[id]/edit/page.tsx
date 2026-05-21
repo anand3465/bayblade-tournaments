@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { requireStaffUser } from "@/lib/auth";
+import { notFound, redirect } from "next/navigation";
+import { canEditTournament, requireStaffUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -20,8 +20,12 @@ export default async function EditTournamentPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireStaffUser();
+  const dbUser = await requireStaffUser();
   const { id } = await params;
+
+  if (!(await canEditTournament(dbUser, id))) {
+    redirect("/staff/tournaments");
+  }
 
   const tournament = await prisma.tournament.findUnique({
     where: { id },

@@ -7,16 +7,25 @@ import GlassCard from "@/components/ui/GlassCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 export default async function StaffTournamentsPage() {
-  await requireStaffUser();
+  const dbUser = await requireStaffUser();
 
-  const tournaments = await prisma.tournament.findMany({
-    orderBy: { startDate: "asc" },
-    include: {
-      _count: {
-        select: { registrations: true },
-      },
-    },
-  });
+  const tournaments =
+    dbUser.role === "ADMIN"
+      ? await prisma.tournament.findMany({
+          orderBy: { startDate: "asc" },
+          include: {
+            _count: { select: { registrations: true } },
+          },
+        })
+      : await prisma.tournament.findMany({
+          where: {
+            assignments: { some: { userId: dbUser.id } },
+          },
+          orderBy: { startDate: "asc" },
+          include: {
+            _count: { select: { registrations: true } },
+          },
+        });
 
   return (
     <PageShell>
@@ -30,11 +39,19 @@ export default async function StaffTournamentsPage() {
       <SectionHeader
         eyebrow="Staff"
         title="Tournaments"
-        subtitle="Edit details for any tournament in the system."
+        subtitle={
+          dbUser.role === "ADMIN"
+            ? "Edit any tournament in the system."
+            : "Edit only tournaments you are assigned to."
+        }
       />
 
       {tournaments.length === 0 ? (
-        <GlassCard className="p-6 text-slate-400">No tournaments yet.</GlassCard>
+        <GlassCard className="p-6 text-slate-400">
+          {dbUser.role === "EMPLOYEE"
+            ? "No tournaments assigned to you yet. Ask an admin to assign you."
+            : "No tournaments yet."}
+        </GlassCard>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {tournaments.map((tournament) => (

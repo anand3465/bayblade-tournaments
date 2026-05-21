@@ -3,12 +3,12 @@
 import { TournamentStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireStaffUser } from "@/lib/auth";
+import { canEditTournament, requireStaffUser } from "@/lib/auth";
 
 const validStatuses: TournamentStatus[] = ["UPCOMING", "ACTIVE", "COMPLETED"];
 
 export async function updateTournament(formData: FormData) {
-  await requireStaffUser();
+  const dbUser = await requireStaffUser();
 
   const tournamentId = String(formData.get("tournamentId") || "").trim();
   const title = String(formData.get("title") || "").trim();
@@ -37,6 +37,10 @@ export async function updateTournament(formData: FormData) {
 
   if (!tournament) {
     throw new Error("Tournament not found.");
+  }
+
+  if (!(await canEditTournament(dbUser, tournamentId))) {
+    throw new Error("You are not assigned to edit this tournament.");
   }
 
   if (maxPlayers < tournament._count.registrations) {

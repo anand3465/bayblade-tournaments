@@ -2,7 +2,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/auth";
+import { isStaff, syncDbUser } from "@/lib/auth";
 import type { Role } from "@prisma/client";
 
 export default async function Navbar() {
@@ -14,17 +14,21 @@ export default async function Navbar() {
   } | null = null;
 
   if (userId) {
-    dbUser = await prisma.user.findUnique({
-      where: { clerkId: userId },
-      select: {
-        username: true,
-        role: true,
-      },
-    });
+    const synced = await syncDbUser(userId);
+    if (synced) {
+      dbUser = {
+        username: synced.username,
+        role: synced.role,
+      };
+    }
   }
 
   const isAdmin = dbUser?.role === "ADMIN";
-  const showStaff = dbUser ? isStaff(dbUser.role as Role) : false; // role from DB matches Role enum
+  const showStaff = dbUser ? isStaff(dbUser.role as Role) : false;
+
+  const pendingApplications = isAdmin
+    ? await prisma.employeeApplication.count({ where: { status: "PENDING" } })
+    : 0;
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/40 backdrop-blur-xl">
@@ -79,10 +83,15 @@ export default async function Navbar() {
 
           {isAdmin ? (
             <Link
-              href="/admin/tournaments/create"
-              className="rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-4 py-2 text-sm font-extrabold text-slate-950 shadow-[0_8px_24px_rgba(251,191,36,0.28)] transition hover:-translate-y-0.5"
+              href="/admin"
+              className="relative rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-4 py-2 text-sm font-extrabold text-slate-950 shadow-[0_8px_24px_rgba(251,191,36,0.28)] transition hover:-translate-y-0.5"
             >
               Admin
+              {pendingApplications > 0 ? (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {pendingApplications}
+                </span>
+              ) : null}
             </Link>
           ) : null}
 

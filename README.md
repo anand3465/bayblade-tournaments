@@ -18,13 +18,24 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Staff roles (EMPLOYEE / ADMIN)
 
-New sign-ups are assigned the `PLAYER` role by default. To grant staff access (manage parts and edit tournaments at `/staff`):
+New sign-ups are assigned the `PLAYER` role by default.
 
-1. Open Prisma Studio (`npx prisma studio`) or run SQL against your database.
-2. Find the user in the `User` table.
-3. Set `role` to `EMPLOYEE` (store staff) or `ADMIN` (full access including creating tournaments).
+**Become staff:** Players apply at `/apply/employee` with a cover letter and tournament history. Admins review at `/admin/applications` and approve to promote to `EMPLOYEE`.
+
+**Tournament access:** Admins assign employees to specific tournaments at `/admin/tournaments/[id]/assignments`. Employees can only edit assigned tournaments; admins edit all events.
+
+**Manual promotion (optional):** Set `User.role` to `EMPLOYEE` or `ADMIN` in Prisma Studio.
 
 Players cannot add, edit, or remove parts in the database—they only select existing parts when creating builds.
+
+### Optional email notifications (Resend)
+
+When a player submits an application, admins can receive email if these env vars are set:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `APP_URL` (e.g. `http://localhost:3000`)
+- `ADMIN_NOTIFY_EMAIL` (optional; otherwise emails all `ADMIN` users)
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

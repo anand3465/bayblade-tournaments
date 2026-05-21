@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/auth";
+import { canEditTournament } from "@/lib/auth";
 import type { Role } from "@prisma/client";
 import PageShell from "@/components/ui/PageShell";
 import GlassCard from "@/components/ui/GlassCard";
@@ -79,7 +79,8 @@ export default async function TournamentDetailPage({
     });
   }
 
-  const canEditTournament = dbUser ? isStaff(dbUser.role as Role) : false;
+  const canEdit =
+    dbUser && (await canEditTournament(dbUser as { id: string; role: Role }, id));
 
   const alreadyRegistered = !!tournament.registrations.find(
     (registration) => registration.userId === dbUser?.id
@@ -107,7 +108,7 @@ export default async function TournamentDetailPage({
           maxPlayers={tournament.maxPlayers}
         />
 
-        {canEditTournament ? (
+        {canEdit ? (
           <div>
             <BeyButton href={`/staff/tournaments/${tournament.id}/edit`} variant="ghost">
               Edit tournament

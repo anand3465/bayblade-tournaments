@@ -35,8 +35,8 @@ export default async function StaffHubPage() {
         <GlassCard strong className="p-6">
           <h2 className="text-2xl font-extrabold text-white">Tournaments</h2>
           <p className="mt-2 text-sm text-slate-400">
-            Update tournament titles, schedules, capacity, and status for any
-            event.
+            Update tournament details for events you are assigned to (admins:
+            all events).
           </p>
           <div className="mt-5">
             <Link

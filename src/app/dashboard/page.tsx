@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { isStaff } from "@/lib/auth";
+import { isStaff, requireDbUser } from "@/lib/auth";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
@@ -11,14 +9,10 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import BuildCard from "@/components/builds/BuildCard";
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  const syncedUser = await requireDbUser();
 
   const dbUser = await prisma.user.findUnique({
-    where: { clerkId: userId },
+    where: { id: syncedUser.id },
     include: {
       registrations: {
         include: {
@@ -59,11 +53,19 @@ export default async function DashboardPage() {
   });
 
   if (!dbUser) {
-    redirect("/sign-in");
+    throw new Error("User profile could not be loaded.");
   }
 
   const isAdmin = dbUser.role === "ADMIN";
   const showStaff = isStaff(dbUser.role);
+
+  const latestApplication =
+    dbUser.role === "PLAYER"
+      ? await prisma.employeeApplication.findFirst({
+          where: { userId: dbUser.id },
+          orderBy: { createdAt: "desc" },
+        })
+      : null;
 
   return (
     <PageShell>
@@ -106,6 +108,48 @@ export default async function DashboardPage() {
             </div>
           </div>
         </GlassCard>
+
+        {dbUser.role === "PLAYER" ? (
+          <GlassCard strong className="p-6">
+            <h2 className="text-xl font-extrabold text-white">Become staff</h2>
+            {latestApplication?.status === "PENDING" ? (
+              <p className="mt-2 text-sm text-amber-200">
+                Your application is under review. An admin will respond soon.
+              </p>
+            ) : latestApplication?.status === "REJECTED" ? (
+              <>
+                <p className="mt-2 text-sm text-slate-400">
+                  Your last application was not approved.
+                  {latestApplication.adminNote
+                    ? ` Note: ${latestApplication.adminNote}`
+                    : ""}
+                </p>
+                <div className="mt-5">
+                  <Link
+                    href="/apply/employee"
+                    className="inline-flex rounded-full bg-gradient-to-r from-sky-400 to-cyan-500 px-4 py-2 text-sm font-extrabold text-white"
+                  >
+                    Apply again
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-slate-400">
+                  Apply to help run tournaments and manage the parts catalog.
+                </p>
+                <div className="mt-5">
+                  <Link
+                    href="/apply/employee"
+                    className="inline-flex rounded-full bg-gradient-to-r from-sky-400 to-cyan-500 px-4 py-2 text-sm font-extrabold text-white"
+                  >
+                    Apply to become staff
+                  </Link>
+                </div>
+              </>
+            )}
+          </GlassCard>
+        ) : null}
 
         <section className="space-y-4">
           <div className="flex items-end justify-between gap-4">

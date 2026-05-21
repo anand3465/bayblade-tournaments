@@ -42,6 +42,19 @@ enum BuildVisibility {
   PRIVATE
 }
 
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApplicationEventRole {
+  PARTICIPANT
+  VOLUNTEER
+  ORGANIZER
+  OTHER
+}
+
 model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
@@ -53,9 +66,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tournaments   Tournament[]   @relation("TournamentCreator")
-  registrations Registration[]
-  builds        Build[]
+  tournaments            Tournament[]            @relation("TournamentCreator")
+  registrations          Registration[]
+  builds                 Build[]
+  tournamentAssignments  TournamentAssignment[]  @relation("AssignedStaff")
+  assignmentsMade        TournamentAssignment[]  @relation("AssignmentsMadeBy")
+  employeeApplications   EmployeeApplication[]   @relation("Applicant")
+  applicationsReviewed   EmployeeApplication[]   @relation("ApplicationReviewer")
 }
 
 model Tournament {
@@ -73,6 +90,7 @@ model Tournament {
   createdBy   User   @relation("TournamentCreator", fields: [createdById], references: [id])
 
   registrations Registration[]
+  assignments   TournamentAssignment[]
 }
 
 model Registration {
@@ -85,7 +103,62 @@ model Registration {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 
+  applicationEntries ApplicationTournamentEntry[]
+
   @@unique([userId, tournamentId])
+}
+
+model TournamentAssignment {
+  id           String   @id @default(cuid())
+  assignedAt   DateTime @default(now())
+
+  tournamentId String
+  userId       String
+  assignedById String?
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  user       User       @relation("AssignedStaff", fields: [userId], references: [id], onDelete: Cascade)
+  assignedBy User?      @relation("AssignmentsMadeBy", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@unique([tournamentId, userId])
+}
+
+model EmployeeApplication {
+  id         String            @id @default(cuid())
+  message    String
+  experience String?
+  status     ApplicationStatus @default(PENDING)
+  adminNote  String?
+  createdAt  DateTime          @default(now())
+  reviewedAt DateTime?
+
+  userId       String
+  reviewedById String?
+
+  user              User                         @relation("Applicant", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy        User?                        @relation("ApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  tournamentEntries ApplicationTournamentEntry[]
+
+  @@index([status])
+  @@index([userId])
+}
+
+model ApplicationTournamentEntry {
+  id                String               @id @default(cuid())
+  tournamentName    String
+  eventDate         DateTime
+  location          String?
+  roleAtEvent       ApplicationEventRole
+  placementOrResult String?
+  organizerOrVenue  String?
+  notes             String?
+  isPlatformEvent   Boolean              @default(false)
+
+  applicationId  String
+  registrationId String?
+
+  application  EmployeeApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  registration Registration?       @relation(fields: [registrationId], references: [id], onDelete: SetNull)
 }
 
 model Blade {
