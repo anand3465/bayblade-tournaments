@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { isStaff } from "@/lib/auth";
+import type { Role } from "@prisma/client";
 import PageShell from "@/components/ui/PageShell";
 import GlassCard from "@/components/ui/GlassCard";
 import BeyButton from "@/components/ui/BeyButton";
@@ -64,7 +66,7 @@ export default async function TournamentDetailPage({
     );
   }
 
-  let dbUser: { id: string; username: string | null } | null = null;
+  let dbUser: { id: string; username: string | null; role: string } | null = null;
 
   if (userId) {
     dbUser = await prisma.user.findUnique({
@@ -72,9 +74,12 @@ export default async function TournamentDetailPage({
       select: {
         id: true,
         username: true,
+        role: true,
       },
     });
   }
+
+  const canEditTournament = dbUser ? isStaff(dbUser.role as Role) : false;
 
   const alreadyRegistered = !!tournament.registrations.find(
     (registration) => registration.userId === dbUser?.id
@@ -101,6 +106,14 @@ export default async function TournamentDetailPage({
           registrationsCount={tournament._count.registrations}
           maxPlayers={tournament.maxPlayers}
         />
+
+        {canEditTournament ? (
+          <div>
+            <BeyButton href={`/staff/tournaments/${tournament.id}/edit`} variant="ghost">
+              Edit tournament
+            </BeyButton>
+          </div>
+        ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <GlassCard strong className="p-6">

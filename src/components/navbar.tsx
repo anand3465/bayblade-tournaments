@@ -2,6 +2,8 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { prisma } from "@/lib/prisma";
+import { isStaff } from "@/lib/auth";
+import type { Role } from "@prisma/client";
 
 export default async function Navbar() {
   const { userId } = await auth();
@@ -22,6 +24,7 @@ export default async function Navbar() {
   }
 
   const isAdmin = dbUser?.role === "ADMIN";
+  const showStaff = dbUser ? isStaff(dbUser.role as Role) : false; // role from DB matches Role enum
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/40 backdrop-blur-xl">
@@ -62,6 +65,15 @@ export default async function Navbar() {
               className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-sm font-semibold text-amber-200 transition hover:border-amber-300/40 hover:bg-amber-300/15"
             >
               {dbUser.username || "Player"}
+            </Link>
+          ) : null}
+
+          {showStaff ? (
+            <Link
+              href="/staff"
+              className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-extrabold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-400/20"
+            >
+              Staff
             </Link>
           ) : null}
 

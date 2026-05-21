@@ -16,6 +16,16 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Staff roles (EMPLOYEE / ADMIN)
+
+New sign-ups are assigned the `PLAYER` role by default. To grant staff access (manage parts and edit tournaments at `/staff`):
+
+1. Open Prisma Studio (`npx prisma studio`) or run SQL against your database.
+2. Find the user in the `User` table.
+3. Set `role` to `EMPLOYEE` (store staff) or `ADMIN` (full access including creating tournaments).
+
+Players cannot add, edit, or remove parts in the database—they only select existing parts when creating builds.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

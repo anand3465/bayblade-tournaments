@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { SignOutButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { isStaff } from "@/lib/auth";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
@@ -62,6 +63,7 @@ export default async function DashboardPage() {
   }
 
   const isAdmin = dbUser.role === "ADMIN";
+  const showStaff = isStaff(dbUser.role);
 
   return (
     <PageShell>
@@ -235,6 +237,56 @@ export default async function DashboardPage() {
             </div>
           )}
         </section>
+
+        {showStaff ? (
+          <section className="space-y-4">
+            <div className="flex items-end justify-between gap-4">
+              <SectionHeader
+                eyebrow="Staff"
+                title="Staff Tools"
+                subtitle="Manage parts catalog and tournament details."
+              />
+              <Link
+                href="/staff"
+                className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-extrabold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-400/20"
+              >
+                Open staff panel
+              </Link>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <GlassCard strong className="p-6">
+                <h3 className="text-xl font-extrabold text-white">Parts</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Add or edit blades, ratchets, and bits.
+                </p>
+                <div className="mt-5">
+                  <Link
+                    href="/staff/parts"
+                    className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-400/30 hover:bg-sky-400/10 hover:text-sky-300"
+                  >
+                    Manage parts
+                  </Link>
+                </div>
+              </GlassCard>
+
+              <GlassCard strong className="p-6">
+                <h3 className="text-xl font-extrabold text-white">Tournaments</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Edit any tournament&apos;s details and status.
+                </p>
+                <div className="mt-5">
+                  <Link
+                    href="/staff/tournaments"
+                    className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-sky-400/30 hover:bg-sky-400/10 hover:text-sky-300"
+                  >
+                    Manage tournaments
+                  </Link>
+                </div>
+              </GlassCard>
+            </div>
+          </section>
+        ) : null}
 
         {isAdmin ? (
           <section className="space-y-4">
