@@ -1,3 +1,6 @@
+/**
+ * Creates the shared Prisma client and Postgres adapter used by server-side data access.
+ */
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -11,7 +14,9 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const adapter = new PrismaPg(pool as any);
+type PrismaPgPool = ConstructorParameters<typeof PrismaPg>[0];
+
+const adapter = new PrismaPg(pool as unknown as PrismaPgPool);
 
 export const prisma =
   globalForPrisma.prisma ??

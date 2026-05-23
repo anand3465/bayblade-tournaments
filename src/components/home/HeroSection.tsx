@@ -1,5 +1,11 @@
+/**
+ * Home page presentation component for the public landing experience.
+ */
 import BeyButton from "@/components/ui/BeyButton";
 
+/**
+ * Renders the hero section UI component.
+ */
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.94),rgba(2,6,23,0.96))] px-6 py-16 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:px-10 lg:px-14">

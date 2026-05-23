@@ -1,9 +1,15 @@
+/**
+ * Provides server actions for the admin/tournaments/create workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Server action that handles the create tournament workflow and refreshes affected routes.
+ */
 export async function createTournament(formData: FormData) {
   const { userId } = await auth();
 

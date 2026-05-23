@@ -1,3 +1,6 @@
+/**
+ * Seeds the development database with starter users, tournaments, parts, and example builds.
+ */
 import "dotenv/config";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -13,9 +16,14 @@ const pool = new Pool({
   connectionString,
 });
 
-const adapter = new PrismaPg(pool as any);
+type PrismaPgPool = ConstructorParameters<typeof PrismaPg>[0];
+
+const adapter = new PrismaPg(pool as unknown as PrismaPgPool);
 const prisma = new PrismaClient({ adapter });
 
+/**
+ * Runs the seed workflow and writes all starter records in a repeatable order.
+ */
 async function main() {
   await prisma.blade.createMany({
     data: [

@@ -1,3 +1,6 @@
+/**
+ * Tournament presentation component for event discovery, detail, and registration flows.
+ */
 import Link from "next/link";
 import AnimatedCard from "@/components/ui/AnimatedCard";
 import GlassCard from "@/components/ui/GlassCard";
@@ -16,6 +19,9 @@ type TournamentCardProps = {
   delay?: number;
 };
 
+/**
+ * Renders the tournament card UI component.
+ */
 export default function TournamentCard({
   id,
   title,

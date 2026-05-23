@@ -1,9 +1,15 @@
+/**
+ * Provides server actions for the builds/create workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Classifies a build from its combined attack, defense, and stamina totals.
+ */
 function getBuildType(stats: {
   attack: number;
   defense: number;
@@ -19,6 +25,9 @@ function getBuildType(stats: {
   return "Stamina";
 }
 
+/**
+ * Server action that handles the create build workflow and refreshes affected routes.
+ */
 export async function createBuild(formData: FormData) {
   const { userId } = await auth();
 

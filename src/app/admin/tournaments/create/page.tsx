@@ -1,8 +1,14 @@
+/**
+ * Renders the admin/tournaments/create route and loads the server data needed by that screen.
+ */
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createTournament } from "./actions";
 
+/**
+ * Renders the create tournament page route with the data and access checks it requires.
+ */
 export default async function CreateTournamentPage() {
   const { userId } = await auth();
 

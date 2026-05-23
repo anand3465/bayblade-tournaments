@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
+
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
@@ -9,6 +13,9 @@ type AnimatedCardProps = {
   delay?: number;
 };
 
+/**
+ * Renders the animated card UI component.
+ */
 export default function AnimatedCard({
   children,
   className = "",

@@ -1,3 +1,6 @@
+/**
+ * Renders the global navigation and adapts links to the current authenticated user role.
+ */
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
@@ -5,6 +8,9 @@ import { prisma } from "@/lib/prisma";
 import { isStaff, syncDbUser } from "@/lib/auth";
 import type { Role } from "@prisma/client";
 
+/**
+ * Renders the navbar UI component.
+ */
 export default async function Navbar() {
   const { userId } = await auth();
 

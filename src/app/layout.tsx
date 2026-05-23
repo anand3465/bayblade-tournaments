@@ -1,3 +1,6 @@
+/**
+ * Defines the root application shell, metadata, global styles, and shared navigation.
+ */
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
@@ -8,6 +11,9 @@ export const metadata: Metadata = {
   description: "Builds, tournaments, rankings, and battles.",
 };
 
+/**
+ * Wraps every route with document structure, global styling, and navigation.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

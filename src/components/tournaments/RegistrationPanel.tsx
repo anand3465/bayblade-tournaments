@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Tournament presentation component for event discovery, detail, and registration flows.
+ */
+
 import { useState, useTransition } from "react";
 import BeyButton from "@/components/ui/BeyButton";
 import GlassCard from "@/components/ui/GlassCard";
@@ -12,6 +16,9 @@ type RegistrationPanelProps = {
   onDrop?: () => Promise<void> | void;
 };
 
+/**
+ * Renders the registration panel UI component.
+ */
 export default function RegistrationPanel({
   isRegistered,
   isFull,

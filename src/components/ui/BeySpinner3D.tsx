@@ -1,7 +1,14 @@
 "use client";
 
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
+
 import { motion } from "framer-motion";
 
+/**
+ * Renders the bey spinner 3 d UI component.
+ */
 export default function BeySpinner3D({
   size = 220,
   className = "",

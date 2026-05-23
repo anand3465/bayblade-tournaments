@@ -1,3 +1,6 @@
+/**
+ * Renders the staff/parts/new route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireStaffUser } from "@/lib/auth";
@@ -8,6 +11,9 @@ import type { PartType } from "../actions";
 
 const validTypes: PartType[] = ["blade", "ratchet", "bit"];
 
+/**
+ * Renders the new part page route with the data and access checks it requires.
+ */
 export default async function NewPartPage({
   searchParams,
 }: {

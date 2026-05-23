@@ -1,3 +1,6 @@
+/**
+ * Defines global theme tokens, base element styles, and shared utility classes.
+ */
 @import "tailwindcss";
 
 :root {

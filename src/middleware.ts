@@ -1,3 +1,6 @@
+/**
+ * Protects authenticated application routes with Clerk middleware before requests reach route handlers.
+ */
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher([

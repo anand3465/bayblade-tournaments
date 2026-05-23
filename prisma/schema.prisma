@@ -1,3 +1,6 @@
+/**
+ * Defines the application data model, relationships, role enums, and Beyblade part catalog schema.
+ */
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,12 +9,14 @@ datasource db {
   provider = "postgresql"
 }
 
+/// Categorizes Beyblade parts by the slot they occupy in a build.
 enum PartType {
   BLADE
   RATCHET
   BIT
 }
 
+/// Represents competitive legality for catalog parts.
 enum PartStatus {
   LEGAL
   LIMITED
@@ -19,35 +24,41 @@ enum PartStatus {
   UNRELEASED
 }
 
+/// Represents the evaluated legality of a complete build.
 enum BuildStatus {
   LEGAL
   WARNING
   ILLEGAL
 }
 
+/// Controls user permissions across player, employee, and admin workflows.
 enum Role {
   PLAYER
   EMPLOYEE
   ADMIN
 }
 
+/// Tracks the lifecycle state of a tournament.
 enum TournamentStatus {
   UPCOMING
   ACTIVE
   COMPLETED
 }
 
+/// Determines whether a build is public or private to its owner.
 enum BuildVisibility {
   PUBLIC
   PRIVATE
 }
 
+/// Tracks review state for employee applications.
 enum ApplicationStatus {
   PENDING
   APPROVED
   REJECTED
 }
 
+/// Captures the applicant role for prior tournament experience.
 enum ApplicationEventRole {
   PARTICIPANT
   VOLUNTEER
@@ -55,6 +66,7 @@ enum ApplicationEventRole {
   OTHER
 }
 
+/// Stores the local profile mirrored from Clerk and related platform activity.
 model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
@@ -75,6 +87,7 @@ model User {
   applicationsReviewed   EmployeeApplication[]   @relation("ApplicationReviewer")
 }
 
+/// Stores event details, creator ownership, registrations, and staff assignments.
 model Tournament {
   id          String           @id @default(cuid())
   title       String
@@ -93,6 +106,7 @@ model Tournament {
   assignments   TournamentAssignment[]
 }
 
+/// Joins users to tournaments and prevents duplicate sign-ups.
 model Registration {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -108,6 +122,7 @@ model Registration {
   @@unique([userId, tournamentId])
 }
 
+/// Grants employees permission to manage specific tournaments.
 model TournamentAssignment {
   id           String   @id @default(cuid())
   assignedAt   DateTime @default(now())
@@ -123,6 +138,7 @@ model TournamentAssignment {
   @@unique([tournamentId, userId])
 }
 
+/// Stores staff application content, review status, and reviewer notes.
 model EmployeeApplication {
   id         String            @id @default(cuid())
   message    String
@@ -143,6 +159,7 @@ model EmployeeApplication {
   @@index([userId])
 }
 
+/// Stores tournament history entries submitted with an employee application.
 model ApplicationTournamentEntry {
   id                String               @id @default(cuid())
   tournamentName    String
@@ -161,6 +178,7 @@ model ApplicationTournamentEntry {
   registration Registration?       @relation(fields: [registrationId], references: [id], onDelete: SetNull)
 }
 
+/// Catalog record for blade parts and their performance attributes.
 model Blade {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -178,6 +196,7 @@ model Blade {
   builds Build[]
 }
 
+/// Catalog record for ratchet parts and their performance attributes.
 model Ratchet {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -192,6 +211,7 @@ model Ratchet {
   builds Build[]
 }
 
+/// Catalog record for bit parts and their performance attributes.
 model Bit {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -206,6 +226,7 @@ model Bit {
   builds Build[]
 }
 
+/// Stores a user-created Beyblade combination assembled from one blade, ratchet, and bit.
 model Build {
   id          String          @id @default(cuid())
   title       String

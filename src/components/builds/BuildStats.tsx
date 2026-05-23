@@ -1,3 +1,6 @@
+/**
+ * Build presentation component for displaying Beyblade part combinations and statistics.
+ */
 import StatBar from "@/components/ui/StatBar";
 
 type BuildStatsProps = {
@@ -8,6 +11,9 @@ type BuildStatsProps = {
   speed?: number;
 };
 
+/**
+ * Renders the build stats UI component.
+ */
 export default function BuildStats({
   attack,
   defense,

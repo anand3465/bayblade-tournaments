@@ -1,3 +1,6 @@
+/**
+ * Provides server actions for the apply/employee workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { ApplicationEventRole } from "@prisma/client";
@@ -25,6 +28,9 @@ export type TournamentEntryInput = {
   registrationId?: string;
 };
 
+/**
+ * Server action that handles the submit employee application workflow and refreshes affected routes.
+ */
 export async function submitEmployeeApplication(formData: FormData) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");

@@ -1,3 +1,6 @@
+/**
+ * Home page presentation component for the public landing experience.
+ */
 import GlassCard from "@/components/ui/GlassCard";
 
 const features = [
@@ -15,6 +18,9 @@ const features = [
   },
 ];
 
+/**
+ * Renders the feature cards UI component.
+ */
 export default function FeatureCards() {
   return (
     <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

@@ -1,7 +1,13 @@
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
 type StatusBadgeProps = {
   value: string;
 };
 
+/**
+ * Maps a status value to the badge classes used throughout the interface.
+ */
 function getClasses(value: string) {
   const key = value.toUpperCase();
 
@@ -31,6 +37,9 @@ function getClasses(value: string) {
   }
 }
 
+/**
+ * Renders the status badge UI component.
+ */
 export default function StatusBadge({ value }: StatusBadgeProps) {
   return (
     <span

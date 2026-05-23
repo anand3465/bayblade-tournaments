@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Interactive form component for collecting user input and submitting the related workflow.
+ */
+
 import GlassCard from "@/components/ui/GlassCard";
 import type { PartType } from "./actions";
 import {
@@ -53,6 +57,9 @@ const inputClass =
 
 const labelClass = "mb-2 block text-sm font-medium text-white";
 
+/**
+ * Renders the part form UI component.
+ */
 export default function PartForm(props: PartFormProps) {
   const { partType, mode, partId } = props;
   const defaults = props.defaultValues ?? {};

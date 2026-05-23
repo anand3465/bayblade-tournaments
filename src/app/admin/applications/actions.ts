@@ -1,9 +1,15 @@
+/**
+ * Provides server actions for the admin/applications workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdminUser } from "@/lib/auth";
 
+/**
+ * Server action that handles the approve application workflow and refreshes affected routes.
+ */
 export async function approveApplication(formData: FormData) {
   const admin = await requireAdminUser();
   const applicationId = String(formData.get("applicationId") || "").trim();
@@ -36,6 +42,9 @@ export async function approveApplication(formData: FormData) {
   redirect("/admin/applications");
 }
 
+/**
+ * Server action that handles the reject application workflow and refreshes affected routes.
+ */
 export async function rejectApplication(formData: FormData) {
   const admin = await requireAdminUser();
   const applicationId = String(formData.get("applicationId") || "").trim();

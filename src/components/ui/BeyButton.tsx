@@ -1,3 +1,6 @@
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
@@ -20,6 +23,9 @@ type LinkProps = BaseProps & {
 
 type BeyButtonProps = ButtonProps | LinkProps;
 
+/**
+ * Returns the visual classes for a button variant.
+ */
 function getVariantClasses(variant: Variant) {
   switch (variant) {
     case "gold":
@@ -34,6 +40,9 @@ function getVariantClasses(variant: Variant) {
   }
 }
 
+/**
+ * Combines base, variant, and caller-provided button classes.
+ */
 function buildClasses(variant: Variant, className?: string) {
   return [
     "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-extrabold transition",
@@ -43,6 +52,9 @@ function buildClasses(variant: Variant, className?: string) {
   ].join(" ");
 }
 
+/**
+ * Renders the bey button UI component.
+ */
 export default function BeyButton(props: BeyButtonProps) {
   const variant = props.variant ?? "primary";
 

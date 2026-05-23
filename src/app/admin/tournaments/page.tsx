@@ -1,3 +1,6 @@
+/**
+ * Renders the admin/tournaments route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,6 +9,9 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 
+/**
+ * Renders the admin tournaments page route with the data and access checks it requires.
+ */
 export default async function AdminTournamentsPage() {
   await requireAdminUser();
 

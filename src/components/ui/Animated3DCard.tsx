@@ -1,8 +1,15 @@
 "use client";
 
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
+
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { ReactNode, MouseEvent } from "react";
 
+/**
+ * Renders the animated 3 d card UI component.
+ */
 export default function Animated3DCard({
   children,
   className = "",

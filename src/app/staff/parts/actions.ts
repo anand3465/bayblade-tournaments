@@ -1,3 +1,6 @@
+/**
+ * Provides server actions for the staff/parts workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { redirect } from "next/navigation";
@@ -6,6 +9,9 @@ import { requireStaffUser } from "@/lib/auth";
 
 export type PartType = "blade" | "ratchet" | "bit";
 
+/**
+ * Parses a required integer form field and throws a clear validation error when invalid.
+ */
 function parseIntField(value: FormDataEntryValue | null, label: string) {
   const n = Number(String(value ?? "").trim());
   if (!Number.isFinite(n) || !Number.isInteger(n)) {
@@ -14,6 +20,9 @@ function parseIntField(value: FormDataEntryValue | null, label: string) {
   return n;
 }
 
+/**
+ * Parses an optional numeric form field while preserving empty values as null.
+ */
 function parseOptionalFloat(value: FormDataEntryValue | null) {
   const raw = String(value ?? "").trim();
   if (!raw) return null;
@@ -24,11 +33,17 @@ function parseOptionalFloat(value: FormDataEntryValue | null) {
   return n;
 }
 
+/**
+ * Trims optional text fields and stores blank values as null.
+ */
 function parseOptionalString(value: FormDataEntryValue | null) {
   const raw = String(value ?? "").trim();
   return raw || null;
 }
 
+/**
+ * Builds the validated payload used when creating or updating blade records.
+ */
 function parseBladeFields(formData: FormData) {
   const name = String(formData.get("name") || "").trim();
   const category = String(formData.get("category") || "").trim();
@@ -52,6 +67,9 @@ function parseBladeFields(formData: FormData) {
   };
 }
 
+/**
+ * Builds the validated payload shared by ratchet and bit create/update actions.
+ */
 function parseRatchetOrBitFields(formData: FormData) {
   const name = String(formData.get("name") || "").trim();
 
@@ -70,6 +88,9 @@ function parseRatchetOrBitFields(formData: FormData) {
   };
 }
 
+/**
+ * Turns Prisma unique-name conflicts into user-facing validation errors.
+ */
 function handleUniqueNameError(error: unknown) {
   if (
     error &&
@@ -82,6 +103,9 @@ function handleUniqueNameError(error: unknown) {
   throw error;
 }
 
+/**
+ * Server action that handles the create blade workflow and refreshes affected routes.
+ */
 export async function createBlade(formData: FormData) {
   await requireStaffUser();
   const data = parseBladeFields(formData);
@@ -94,6 +118,9 @@ export async function createBlade(formData: FormData) {
   }
 }
 
+/**
+ * Server action that handles the update blade workflow and refreshes affected routes.
+ */
 export async function updateBlade(formData: FormData) {
   await requireStaffUser();
   const id = String(formData.get("id") || "").trim();
@@ -109,6 +136,9 @@ export async function updateBlade(formData: FormData) {
   }
 }
 
+/**
+ * Server action that handles the create ratchet workflow and refreshes affected routes.
+ */
 export async function createRatchet(formData: FormData) {
   await requireStaffUser();
   const data = parseRatchetOrBitFields(formData);
@@ -121,6 +151,9 @@ export async function createRatchet(formData: FormData) {
   }
 }
 
+/**
+ * Server action that handles the update ratchet workflow and refreshes affected routes.
+ */
 export async function updateRatchet(formData: FormData) {
   await requireStaffUser();
   const id = String(formData.get("id") || "").trim();
@@ -136,6 +169,9 @@ export async function updateRatchet(formData: FormData) {
   }
 }
 
+/**
+ * Server action that handles the create bit workflow and refreshes affected routes.
+ */
 export async function createBit(formData: FormData) {
   await requireStaffUser();
   const data = parseRatchetOrBitFields(formData);
@@ -148,6 +184,9 @@ export async function createBit(formData: FormData) {
   }
 }
 
+/**
+ * Server action that handles the update bit workflow and refreshes affected routes.
+ */
 export async function updateBit(formData: FormData) {
   await requireStaffUser();
   const id = String(formData.get("id") || "").trim();

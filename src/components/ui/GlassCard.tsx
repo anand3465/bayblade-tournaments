@@ -1,3 +1,6 @@
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
 import type { ReactNode } from "react";
 
 type GlassCardProps = {
@@ -6,6 +9,9 @@ type GlassCardProps = {
   strong?: boolean;
 };
 
+/**
+ * Renders the glass card UI component.
+ */
 export default function GlassCard({
   children,
   className = "",

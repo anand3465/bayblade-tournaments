@@ -1,3 +1,6 @@
+/**
+ * Renders the staff/parts/[id]/edit route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireStaffUser } from "@/lib/auth";
@@ -9,6 +12,9 @@ import type { PartType } from "../../actions";
 
 const validTypes: PartType[] = ["blade", "ratchet", "bit"];
 
+/**
+ * Renders the edit part page route with the data and access checks it requires.
+ */
 export default async function EditPartPage({
   params,
   searchParams,

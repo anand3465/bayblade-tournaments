@@ -1,3 +1,6 @@
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
 type SectionHeaderProps = {
   eyebrow?: string;
   title: string;
@@ -5,6 +8,9 @@ type SectionHeaderProps = {
   align?: "left" | "center";
 };
 
+/**
+ * Renders the section header UI component.
+ */
 export default function SectionHeader({
   eyebrow,
   title,

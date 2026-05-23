@@ -1,3 +1,6 @@
+/**
+ * Renders the admin/tournaments/[id]/assignments route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdminUser } from "@/lib/auth";
@@ -7,6 +10,9 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
 import { setTournamentAssignments } from "../../assignments/actions";
 
+/**
+ * Renders the tournament assignments page route with the data and access checks it requires.
+ */
 export default async function TournamentAssignmentsPage({
   params,
 }: {

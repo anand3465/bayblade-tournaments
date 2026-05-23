@@ -1,3 +1,6 @@
+/**
+ * Collects email notification hooks so application workflows can notify admins from one place.
+ */
 import { prisma } from "@/lib/prisma";
 
 type ApplicationNotifyPayload = {
@@ -7,6 +10,9 @@ type ApplicationNotifyPayload = {
   tournamentEntryCount: number;
 };
 
+/**
+ * Notifies administrators when a new employee application is submitted.
+ */
 export async function notifyAdminsOfNewApplication(
   payload: ApplicationNotifyPayload
 ) {

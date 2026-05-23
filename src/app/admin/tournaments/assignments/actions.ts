@@ -1,9 +1,15 @@
+/**
+ * Provides server actions for the admin/tournaments/assignments workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdminUser } from "@/lib/auth";
 
+/**
+ * Server action that handles the set tournament assignments workflow and refreshes affected routes.
+ */
 export async function setTournamentAssignments(formData: FormData) {
   const admin = await requireAdminUser();
 

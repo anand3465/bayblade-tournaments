@@ -1,3 +1,6 @@
+/**
+ * Renders the admin/applications route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -5,6 +8,9 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
 
+/**
+ * Renders the admin applications page route with the data and access checks it requires.
+ */
 export default async function AdminApplicationsPage() {
   await requireAdminUser();
 

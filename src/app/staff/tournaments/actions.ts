@@ -1,3 +1,6 @@
+/**
+ * Provides server actions for the staff/tournaments workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { TournamentStatus } from "@prisma/client";
@@ -7,6 +10,9 @@ import { canEditTournament, requireStaffUser } from "@/lib/auth";
 
 const validStatuses: TournamentStatus[] = ["UPCOMING", "ACTIVE", "COMPLETED"];
 
+/**
+ * Server action that handles the update tournament workflow and refreshes affected routes.
+ */
 export async function updateTournament(formData: FormData) {
   const dbUser = await requireStaffUser();
 

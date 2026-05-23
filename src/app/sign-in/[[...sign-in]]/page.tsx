@@ -1,5 +1,11 @@
+/**
+ * Renders the sign-in/[[...sign-in]] route and loads the server data needed by that screen.
+ */
 import { SignIn } from "@clerk/nextjs";
 
+/**
+ * Renders the sign in page route with the data and access checks it requires.
+ */
 export default function SignInPage() {
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4">

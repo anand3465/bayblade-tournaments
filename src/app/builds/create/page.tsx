@@ -1,3 +1,6 @@
+/**
+ * Renders the builds/create route and loads the server data needed by that screen.
+ */
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -5,6 +8,9 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BuildForm from "./BuildForm";
 
+/**
+ * Renders the create build page route with the data and access checks it requires.
+ */
 export default async function CreateBuildPage() {
   const { userId } = await auth();
 

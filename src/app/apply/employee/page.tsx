@@ -1,3 +1,6 @@
+/**
+ * Renders the apply/employee route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -6,6 +9,9 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ApplicationForm, { type InitialEntry } from "./ApplicationForm";
 
+/**
+ * Converts an existing tournament registration into an application history entry.
+ */
 function registrationToEntry(reg: {
   id: string;
   tournament: {
@@ -27,6 +33,9 @@ function registrationToEntry(reg: {
   };
 }
 
+/**
+ * Normalizes a saved application event so the form can reuse it as initial state.
+ */
 function applicationEntryToInitial(entry: {
   tournamentName: string;
   eventDate: Date;
@@ -51,6 +60,9 @@ function applicationEntryToInitial(entry: {
   };
 }
 
+/**
+ * Renders the apply employee page route with the data and access checks it requires.
+ */
 export default async function ApplyEmployeePage() {
   const syncedUser = await requireDbUser();
 

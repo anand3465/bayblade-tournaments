@@ -1,3 +1,6 @@
+/**
+ * Tournament presentation component for event discovery, detail, and registration flows.
+ */
 import StatusBadge from "@/components/ui/StatusBadge";
 
 type TournamentHeroProps = {
@@ -10,6 +13,9 @@ type TournamentHeroProps = {
   maxPlayers: number;
 };
 
+/**
+ * Renders the tournament hero UI component.
+ */
 export default function TournamentHero({
   title,
   description,

@@ -1,3 +1,6 @@
+/**
+ * Renders the tournaments/[id] route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
@@ -9,6 +12,9 @@ import BeyButton from "@/components/ui/BeyButton";
 import TournamentHero from "@/components/tournaments/TournamentHero";
 import { registerForTournament, unregisterFromTournament } from "./actions";
 
+/**
+ * Renders the tournament detail page route with the data and access checks it requires.
+ */
 export default async function TournamentDetailPage({
   params,
 }: {

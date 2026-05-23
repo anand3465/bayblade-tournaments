@@ -1,3 +1,6 @@
+/**
+ * Renders the staff/tournaments/[id]/edit route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { canEditTournament, requireStaffUser } from "@/lib/auth";
@@ -7,6 +10,9 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import GlassCard from "@/components/ui/GlassCard";
 import { updateTournament } from "../../actions";
 
+/**
+ * Formats a Date for the datetime-local input used by tournament editing.
+ */
 function toDatetimeLocalValue(date: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -15,6 +21,9 @@ function toDatetimeLocalValue(date: Date) {
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50";
 
+/**
+ * Renders the edit tournament page route with the data and access checks it requires.
+ */
 export default async function EditTournamentPage({
   params,
 }: {

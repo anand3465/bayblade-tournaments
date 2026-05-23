@@ -1,8 +1,14 @@
+/**
+ * Build presentation component for displaying Beyblade part combinations and statistics.
+ */
 type PartChipProps = {
   label: string;
   value: string;
 };
 
+/**
+ * Renders the part chip UI component.
+ */
 export default function PartChip({ label, value }: PartChipProps) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">

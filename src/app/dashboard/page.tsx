@@ -1,3 +1,6 @@
+/**
+ * Renders the dashboard route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +11,9 @@ import GlassCard from "@/components/ui/GlassCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 import BuildCard from "@/components/builds/BuildCard";
 
+/**
+ * Renders the dashboard page route with the data and access checks it requires.
+ */
 export default async function DashboardPage() {
   const syncedUser = await requireDbUser();
 

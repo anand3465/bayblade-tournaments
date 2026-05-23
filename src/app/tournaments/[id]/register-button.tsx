@@ -1,7 +1,14 @@
 "use client";
 
+/**
+ * Interactive form component for collecting user input and submitting the related workflow.
+ */
+
 import { useFormStatus } from "react-dom";
 
+/**
+ * Renders the tournament action button UI component.
+ */
 export default function TournamentActionButton({
   disabled,
   pendingText,

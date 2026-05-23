@@ -1,3 +1,6 @@
+/**
+ * Build presentation component for displaying Beyblade part combinations and statistics.
+ */
 import AnimatedCard from "@/components/ui/AnimatedCard";
 import GlassCard from "@/components/ui/GlassCard";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -23,6 +26,9 @@ type BuildCardProps = {
   delay?: number;
 };
 
+/**
+ * Renders the build card UI component.
+ */
 export default function BuildCard({
   name,
   blade,

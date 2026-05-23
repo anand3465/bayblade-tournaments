@@ -1,3 +1,6 @@
+/**
+ * Renders the home page by loading featured tournaments and public builds for the landing experience.
+ */
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import PageShell from "@/components/ui/PageShell";
@@ -7,6 +10,9 @@ import FeatureCards from "@/components/home/FeatureCards";
 import TournamentCard from "@/components/tournaments/TournamentCard";
 import BuildCard from "@/components/builds/BuildCard";
 
+/**
+ * Renders the home page route with the data and access checks it requires.
+ */
 export default async function HomePage() {
   const [featuredTournaments, featuredBuilds] = await Promise.all([
     prisma.tournament.findMany({

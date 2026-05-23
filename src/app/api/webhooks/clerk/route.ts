@@ -1,8 +1,25 @@
+/**
+ * Defines the API handler for the api/webhooks/clerk endpoint.
+ */
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+type ClerkWebhookEvent = {
+  type: string;
+  data: {
+    id?: string;
+    email_addresses?: { email_address?: string }[];
+    username?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+  };
+};
+
+/**
+ * Validates Clerk webhook signatures and mirrors user lifecycle changes into the database.
+ */
 export async function POST(req: Request) {
   const body = await req.text();
   const headerPayload = await headers();
@@ -29,14 +46,14 @@ export async function POST(req: Request) {
 
   const wh = new Webhook(secret);
 
-  let evt: any;
+  let evt: ClerkWebhookEvent;
 
   try {
     evt = wh.verify(body, {
       "svix-id": svixId,
       "svix-timestamp": svixTimestamp,
       "svix-signature": svixSignature,
-    });
+    }) as ClerkWebhookEvent;
     console.log("Webhook verified successfully");
   } catch (error) {
     console.error("Webhook verification failed:", error);
@@ -47,6 +64,10 @@ export async function POST(req: Request) {
   const data = evt.data;
 
   if (eventType === "user.created" || eventType === "user.updated") {
+    if (!data.id) {
+      return new NextResponse("Missing user id", { status: 400 });
+    }
+
     const email = data.email_addresses?.[0]?.email_address ?? "";
     const username =
       data.username ||

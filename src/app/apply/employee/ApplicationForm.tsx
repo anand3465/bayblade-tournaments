@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Interactive form component for collecting user input and submitting the related workflow.
+ */
+
 import { useState } from "react";
 import GlassCard from "@/components/ui/GlassCard";
 import { submitEmployeeApplication } from "./actions";
@@ -17,6 +21,9 @@ const roleOptions = [
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-sky-400/50";
 
+/**
+ * Creates a blank tournament experience entry for the employee application form.
+ */
 function emptyEntry(): InitialEntry {
   return {
     tournamentName: "",
@@ -30,6 +37,9 @@ function emptyEntry(): InitialEntry {
   };
 }
 
+/**
+ * Formats a saved date value for an HTML date input.
+ */
 function toDateInputValue(isoOrDate: string) {
   if (!isoOrDate) return "";
   const d = new Date(isoOrDate);
@@ -38,6 +48,9 @@ function toDateInputValue(isoOrDate: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/**
+ * Renders the application form UI component.
+ */
 export default function ApplicationForm({
   initialEntries,
 }: {

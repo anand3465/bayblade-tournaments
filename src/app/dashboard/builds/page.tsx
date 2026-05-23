@@ -1,8 +1,14 @@
+/**
+ * Renders the dashboard/builds route and loads the server data needed by that screen.
+ */
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Renders the my builds page route with the data and access checks it requires.
+ */
 export default async function MyBuildsPage() {
   const { userId } = await auth();
 

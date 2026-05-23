@@ -1,5 +1,11 @@
+/**
+ * Renders the sign-up/[[...sign-up]] route and loads the server data needed by that screen.
+ */
 import { SignUp } from "@clerk/nextjs";
 
+/**
+ * Renders the sign up page route with the data and access checks it requires.
+ */
 export default function SignUpPage() {
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4">

@@ -1,3 +1,6 @@
+/**
+ * Renders the admin/applications/[id] route and loads the server data needed by that screen.
+ */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdminUser } from "@/lib/auth";
@@ -14,6 +17,9 @@ const roleLabels: Record<string, string> = {
   OTHER: "Other",
 };
 
+/**
+ * Renders the application detail page route with the data and access checks it requires.
+ */
 export default async function ApplicationDetailPage({
   params,
 }: {

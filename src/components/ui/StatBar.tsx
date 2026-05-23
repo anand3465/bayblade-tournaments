@@ -1,3 +1,6 @@
+/**
+ * Reusable presentation component used to keep shared UI styling consistent across the app.
+ */
 type StatBarProps = {
   label: string;
   value: number;
@@ -6,6 +9,9 @@ type StatBarProps = {
   showValue?: boolean; 
 };
 
+/**
+ * Renders the stat bar UI component.
+ */
 export default function StatBar({
   label,
   value,

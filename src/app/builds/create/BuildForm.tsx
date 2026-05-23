@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Interactive form component for collecting user input and submitting the related workflow.
+ */
+
 import { useMemo, useState } from "react";
 import GlassCard from "@/components/ui/GlassCard";
 import { createBuild } from "./actions";
@@ -44,6 +48,9 @@ type Bit = {
   speed: number;
 };
 
+/**
+ * Classifies a build from its combined attack, defense, and stamina totals.
+ */
 function getBuildType(stats: {
   attack: number;
   defense: number;
@@ -59,6 +66,9 @@ function getBuildType(stats: {
   return "Stamina";
 }
 
+/**
+ * Displays one calculated build statistic in the live build preview.
+ */
 function StatTile({
   label,
   value,
@@ -74,6 +84,9 @@ function StatTile({
   );
 }
 
+/**
+ * Renders the build form UI component.
+ */
 export default function BuildForm({
   blades,
   ratchets,

@@ -1,3 +1,6 @@
+/**
+ * Configures Prisma schema, migrations, seed command, and database connection lookup.
+ */
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 

@@ -1,9 +1,15 @@
+/**
+ * Provides server actions for the tournaments/[id] workflow, including validation, persistence, and cache refreshes.
+ */
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Server action that handles the register for tournament workflow and refreshes affected routes.
+ */
 export async function registerForTournament(formData: FormData) {
   const { userId } = await auth();
 
@@ -61,6 +67,9 @@ export async function registerForTournament(formData: FormData) {
   redirect(`/tournaments/${tournamentId}`);
 }
 
+/**
+ * Server action that handles the unregister from tournament workflow and refreshes affected routes.
+ */
 export async function unregisterFromTournament(formData: FormData) {
   const { userId } = await auth();
 
