@@ -11,6 +11,7 @@ import GlassCard from "@/components/ui/GlassCard";
 type RegistrationPanelProps = {
   isRegistered: boolean;
   isFull: boolean;
+  isClosed?: boolean;
   isSignedIn: boolean;
   onRegister?: () => Promise<void> | void;
   onDrop?: () => Promise<void> | void;
@@ -22,6 +23,7 @@ type RegistrationPanelProps = {
 export default function RegistrationPanel({
   isRegistered,
   isFull,
+  isClosed = false,
   isSignedIn,
   onRegister,
   onDrop,
@@ -51,21 +53,38 @@ export default function RegistrationPanel({
       </p>
 
       <h3 className="mt-3 text-2xl font-extrabold text-white">
-        {isRegistered ? "You are registered" : "Join this tournament"}
+        {isRegistered
+          ? "You are registered"
+          : isClosed
+          ? "Registration closed"
+          : "Join this tournament"}
       </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-400">
         {isRegistered
-          ? "You can drop from this tournament if your plans changed."
+          ? isClosed
+            ? "This tournament has started, so registrations can no longer be changed."
+            : "You can drop from this tournament if your plans changed."
+          : isClosed
+          ? "Sign-ups closed when this tournament started."
           : isFull
           ? "This tournament is currently full."
           : "Secure your place in the bracket and get ready to battle."}
       </p>
 
       <div className="mt-5">
-        {!isSignedIn ? (
+        {isClosed && !isRegistered ? (
+          <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm font-bold text-amber-200">
+            Registration Closed
+          </span>
+        ) : !isSignedIn ? (
           <BeyButton href="/sign-in">Sign In to Register</BeyButton>
         ) : isRegistered ? (
+          isClosed ? (
+            <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm font-bold text-amber-200">
+              Registration Locked
+            </span>
+          ) : (
           <>
             {!showConfirm ? (
               <BeyButton
@@ -104,6 +123,7 @@ export default function RegistrationPanel({
               </div>
             )}
           </>
+          )
         ) : (
           <BeyButton
             onClick={handleRegister}

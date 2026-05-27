@@ -26,6 +26,8 @@ export default function TournamentHero({
   maxPlayers,
 }: TournamentHeroProps) {
   const date = new Date(startDate);
+  const registrationClosed = date <= new Date();
+  const displayStatus = registrationClosed ? "Registration Closed" : status;
   const percentage = maxPlayers > 0 ? Math.min((registrationsCount / maxPlayers) * 100, 100) : 0;
 
   return (
@@ -36,7 +38,7 @@ export default function TournamentHero({
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-3xl">
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <StatusBadge value={status} />
+            <StatusBadge value={displayStatus} />
             <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-300">
               {location || "Location TBA"}
             </span>
@@ -53,6 +55,12 @@ export default function TournamentHero({
               minute: "2-digit",
             })}
           </p>
+
+          {registrationClosed ? (
+            <p className="mt-3 text-sm font-semibold text-amber-200">
+              Registration closed when this tournament started.
+            </p>
+          ) : null}
 
           {description ? (
             <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">

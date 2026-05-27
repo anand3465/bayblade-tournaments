@@ -42,6 +42,10 @@ export async function registerForTournament(formData: FormData) {
     throw new Error("Tournament not found.");
   }
 
+  if (new Date(tournament.startDate) <= new Date()) {
+    throw new Error("Registration is closed for this tournament.");
+  }
+
   const existing = await prisma.registration.findFirst({
     where: {
       userId: dbUser.id,
@@ -87,7 +91,6 @@ export async function unregisterFromTournament(formData: FormData) {
     redirect("/dashboard");
   }
 
-  // ✅ ADD THIS BLOCK (the optional section)
   const tournament = await prisma.tournament.findUnique({
     where: { id: tournamentId },
   });
@@ -99,7 +102,6 @@ export async function unregisterFromTournament(formData: FormData) {
   if (new Date(tournament.startDate) <= new Date()) {
     throw new Error("Tournament has already started.");
   }
-  // ✅ END OF OPTIONAL SECTION
 
   await prisma.registration.deleteMany({
     where: {

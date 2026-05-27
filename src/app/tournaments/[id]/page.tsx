@@ -93,6 +93,7 @@ export default async function TournamentDetailPage({
   );
 
   const isFull = tournament._count.registrations >= tournament.maxPlayers;
+  const registrationClosed = tournament.startDate <= new Date();
 
   return (
     <PageShell>
@@ -129,27 +130,45 @@ export default async function TournamentDetailPage({
             </p>
 
             <h2 className="mt-3 text-2xl font-extrabold text-white">
-              {alreadyRegistered ? "You are registered" : "Join this tournament"}
+              {alreadyRegistered
+                ? "You are registered"
+                : registrationClosed
+                ? "Registration closed"
+                : "Join this tournament"}
             </h2>
 
             <p className="mt-2 text-sm leading-6 text-slate-400">
               {alreadyRegistered
-                ? "You can drop from this event if your plans changed."
+                ? registrationClosed
+                  ? "This tournament has started, so registrations can no longer be changed."
+                  : "You can drop from this event if your plans changed."
+                : registrationClosed
+                ? "Sign-ups closed when this tournament started."
                 : isFull
                 ? "This tournament is currently full."
                 : "Secure your place in the bracket and get ready to battle."}
             </p>
 
             <div className="mt-5">
-              {!userId ? (
+              {registrationClosed && !alreadyRegistered ? (
+                <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm font-bold text-amber-200">
+                  Registration Closed
+                </span>
+              ) : !userId ? (
                 <BeyButton href="/sign-in">Sign In to Register</BeyButton>
               ) : alreadyRegistered ? (
-                <form action={unregisterFromTournament}>
-                  <input type="hidden" name="tournamentId" value={tournament.id} />
-                  <BeyButton variant="danger" type="submit">
-                    Drop Tournament
-                  </BeyButton>
-                </form>
+                registrationClosed ? (
+                  <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm font-bold text-amber-200">
+                    Registration Locked
+                  </span>
+                ) : (
+                  <form action={unregisterFromTournament}>
+                    <input type="hidden" name="tournamentId" value={tournament.id} />
+                    <BeyButton variant="danger" type="submit">
+                      Drop Tournament
+                    </BeyButton>
+                  </form>
+                )
               ) : isFull ? (
                 <span className="inline-flex items-center rounded-full border border-red-400/30 bg-red-400/10 px-4 py-2 text-sm font-bold text-red-300">
                   Tournament Full

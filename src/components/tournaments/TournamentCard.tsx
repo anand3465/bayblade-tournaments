@@ -35,25 +35,32 @@ export default function TournamentCard({
   delay = 0,
 }: TournamentCardProps) {
   const date = new Date(startDate);
+  const registrationClosed = date <= new Date();
+  const displayStatus = registrationClosed ? "Registration Closed" : status;
   const capacity = maxPlayers > 0 ? Math.min((registrationsCount / maxPlayers) * 100, 100) : 0;
 
   return (
     <AnimatedCard delay={delay}>
-      <GlassCard strong className="bey-card h-full p-6">
+      <GlassCard
+        strong
+        className={`bey-card h-full p-6 ${registrationClosed ? "opacity-85" : ""}`}
+      >
         <div className="flex h-full flex-col">
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
               <h3 className="text-xl font-extrabold text-white">{title}</h3>
               <p className="mt-1 text-sm text-slate-400">
-                {date.toLocaleDateString(undefined, {
+                {date.toLocaleString(undefined, {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
                 })}
               </p>
             </div>
 
-            <StatusBadge value={status} />
+            <StatusBadge value={displayStatus} />
           </div>
 
           <div className="space-y-2 text-sm text-slate-300">
@@ -67,7 +74,9 @@ export default function TournamentCard({
 
           <div className="mt-5">
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="text-slate-300">Bracket Capacity</span>
+              <span className="text-slate-300">
+                {registrationClosed ? "Final Registration" : "Bracket Capacity"}
+              </span>
               <span className="font-bold text-white">
                 {registrationsCount}/{maxPlayers}
               </span>
@@ -81,12 +90,22 @@ export default function TournamentCard({
             </div>
           </div>
 
+          {registrationClosed ? (
+            <p className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm font-semibold text-amber-100">
+              Sign-ups closed when this tournament started.
+            </p>
+          ) : null}
+
           <div className="mt-6">
             <Link
               href={`/tournaments/${id}`}
-              className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-400 to-cyan-500 px-4 py-2 text-sm font-extrabold text-white shadow-[0_8px_24px_rgba(56,189,248,0.28)] transition hover:-translate-y-0.5"
+              className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-extrabold text-white transition hover:-translate-y-0.5 ${
+                registrationClosed
+                  ? "border border-white/10 bg-white/10 text-slate-200"
+                  : "bg-gradient-to-r from-sky-400 to-cyan-500 shadow-[0_8px_24px_rgba(56,189,248,0.28)]"
+              }`}
             >
-              View Tournament
+              {registrationClosed ? "View Details" : "View Tournament"}
             </Link>
           </div>
         </div>
