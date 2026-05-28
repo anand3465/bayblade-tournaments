@@ -18,7 +18,7 @@ export default async function StaffHubPage() {
       <SectionHeader
         eyebrow="Staff"
         title="Staff Panel"
-        subtitle="Manage beyblade parts and tournament details."
+        subtitle="Manage beyblade parts, tournament details, and player join requests."
       />
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -42,7 +42,7 @@ export default async function StaffHubPage() {
           <h2 className="text-2xl font-extrabold text-white">Tournaments</h2>
           <p className="mt-2 text-sm text-slate-400">
             Update tournament details for events you are assigned to (admins:
-            all events).
+            all events), and review player requests to join.
           </p>
           <div className="mt-5">
             <Link

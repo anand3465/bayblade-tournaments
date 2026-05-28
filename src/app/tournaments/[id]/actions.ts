@@ -8,16 +8,23 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Server action that handles the register for tournament workflow and refreshes affected routes.
+ * Server action that handles the request-to-join tournament workflow.
  */
-export async function registerForTournament(formData: FormData) {
+export async function requestToJoinTournament(formData: FormData) {
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
   }
 
-  const tournamentId = String(formData.get("tournamentId") || "");
+  const tournamentId = String(formData.get("tournamentId") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+  const experience = String(formData.get("experience") || "").trim();
+  const preferredBuild = String(formData.get("preferredBuild") || "").trim();
+
+  if (message.length < 20) {
+    throw new Error("Please write at least 20 characters for staff to review.");
+  }
 
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: userId },
@@ -57,16 +64,47 @@ export async function registerForTournament(formData: FormData) {
     return;
   }
 
+  const existingRequest = await prisma.tournamentJoinRequest.findUnique({
+    where: {
+      userId_tournamentId: {
+        userId: dbUser.id,
+        tournamentId,
+      },
+    },
+  });
+
+  if (existingRequest?.status === "PENDING" || existingRequest?.status === "APPROVED") {
+    return;
+  }
+
   if (tournament._count.registrations >= tournament.maxPlayers) {
     throw new Error("Tournament is full.");
   }
 
-  await prisma.registration.create({
-    data: {
-      userId: dbUser.id,
-      tournamentId,
-    },
-  });
+  if (existingRequest) {
+    await prisma.tournamentJoinRequest.update({
+      where: { id: existingRequest.id },
+      data: {
+        message,
+        experience: experience || null,
+        preferredBuild: preferredBuild || null,
+        status: "PENDING",
+        staffNote: null,
+        reviewedById: null,
+        reviewedAt: null,
+      },
+    });
+  } else {
+    await prisma.tournamentJoinRequest.create({
+      data: {
+        userId: dbUser.id,
+        tournamentId,
+        message,
+        experience: experience || null,
+        preferredBuild: preferredBuild || null,
+      },
+    });
+  }
 
   redirect(`/tournaments/${tournamentId}`);
 }

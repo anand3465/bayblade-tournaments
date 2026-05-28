@@ -58,6 +58,13 @@ enum ApplicationStatus {
   REJECTED
 }
 
+/// Tracks review state for player tournament join requests.
+enum TournamentJoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 /// Captures the applicant role for prior tournament experience.
 enum ApplicationEventRole {
   PARTICIPANT
@@ -85,6 +92,8 @@ model User {
   assignmentsMade        TournamentAssignment[]  @relation("AssignmentsMadeBy")
   employeeApplications   EmployeeApplication[]   @relation("Applicant")
   applicationsReviewed   EmployeeApplication[]   @relation("ApplicationReviewer")
+  tournamentJoinRequests TournamentJoinRequest[] @relation("TournamentJoinRequester")
+  joinRequestsReviewed   TournamentJoinRequest[] @relation("TournamentJoinRequestReviewer")
 }
 
 /// Stores event details, creator ownership, registrations, and staff assignments.
@@ -104,6 +113,7 @@ model Tournament {
 
   registrations Registration[]
   assignments   TournamentAssignment[]
+  joinRequests  TournamentJoinRequest[]
 }
 
 /// Joins users to tournaments and prevents duplicate sign-ups.
@@ -136,6 +146,30 @@ model TournamentAssignment {
   assignedBy User?      @relation("AssignmentsMadeBy", fields: [assignedById], references: [id], onDelete: SetNull)
 
   @@unique([tournamentId, userId])
+}
+
+/// Stores player requests to join tournaments before staff review.
+model TournamentJoinRequest {
+  id             String                      @id @default(cuid())
+  message        String
+  experience     String?
+  preferredBuild String?
+  status         TournamentJoinRequestStatus @default(PENDING)
+  staffNote      String?
+  createdAt      DateTime                    @default(now())
+  reviewedAt     DateTime?
+
+  userId       String
+  tournamentId String
+  reviewedById String?
+
+  user       User       @relation("TournamentJoinRequester", fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  reviewedBy User?      @relation("TournamentJoinRequestReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, tournamentId])
+  @@index([status])
+  @@index([tournamentId, status])
 }
 
 /// Stores staff application content, review status, and reviewer notes.

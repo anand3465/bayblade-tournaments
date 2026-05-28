@@ -18,6 +18,12 @@ function getClasses(value: string) {
       return "border-sky-400/30 bg-sky-400/10 text-sky-300";
     case "COMPLETED":
       return "border-slate-400/20 bg-slate-400/10 text-slate-300";
+    case "PENDING":
+      return "border-sky-300/30 bg-sky-300/10 text-sky-200";
+    case "APPROVED":
+      return "border-emerald-400/30 bg-emerald-400/10 text-emerald-300";
+    case "REJECTED":
+      return "border-rose-400/30 bg-rose-400/10 text-rose-300";
     case "REGISTRATION CLOSED":
     case "CLOSED":
       return "border-amber-300/30 bg-amber-300/10 text-amber-200";

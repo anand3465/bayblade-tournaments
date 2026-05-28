@@ -10,7 +10,7 @@ import PageShell from "@/components/ui/PageShell";
 import GlassCard from "@/components/ui/GlassCard";
 import BeyButton from "@/components/ui/BeyButton";
 import TournamentHero from "@/components/tournaments/TournamentHero";
-import { registerForTournament, unregisterFromTournament } from "./actions";
+import { requestToJoinTournament, unregisterFromTournament } from "./actions";
 
 /**
  * Renders the tournament detail page route with the data and access checks it requires.
@@ -85,6 +85,17 @@ export default async function TournamentDetailPage({
     });
   }
 
+  const currentUserJoinRequest = dbUser
+    ? await prisma.tournamentJoinRequest.findUnique({
+        where: {
+          userId_tournamentId: {
+            userId: dbUser.id,
+            tournamentId: id,
+          },
+        },
+      })
+    : null;
+
   const canEdit =
     dbUser && (await canEditTournament(dbUser as { id: string; role: Role }, id));
 
@@ -132,9 +143,13 @@ export default async function TournamentDetailPage({
             <h2 className="mt-3 text-2xl font-extrabold text-white">
               {alreadyRegistered
                 ? "You are registered"
+                : currentUserJoinRequest?.status === "PENDING"
+                ? "Request pending"
+                : currentUserJoinRequest?.status === "REJECTED"
+                ? "Request a new review"
                 : registrationClosed
                 ? "Registration closed"
-                : "Join this tournament"}
+                : "Request to join"}
             </h2>
 
             <p className="mt-2 text-sm leading-6 text-slate-400">
@@ -142,11 +157,15 @@ export default async function TournamentDetailPage({
                 ? registrationClosed
                   ? "This tournament has started, so registrations can no longer be changed."
                   : "You can drop from this event if your plans changed."
+                : currentUserJoinRequest?.status === "PENDING"
+                ? "Staff will review your request before adding you to the bracket."
+                : currentUserJoinRequest?.status === "REJECTED"
+                ? "Your last request was rejected. You can update the form and submit it again."
                 : registrationClosed
                 ? "Sign-ups closed when this tournament started."
                 : isFull
                 ? "This tournament is currently full."
-                : "Secure your place in the bracket and get ready to battle."}
+                : "Tell staff why you want to join. Approved requests become registrations."}
             </p>
 
             <div className="mt-5">
@@ -155,7 +174,7 @@ export default async function TournamentDetailPage({
                   Registration Closed
                 </span>
               ) : !userId ? (
-                <BeyButton href="/sign-in">Sign In to Register</BeyButton>
+                <BeyButton href="/sign-in">Sign In to Request</BeyButton>
               ) : alreadyRegistered ? (
                 registrationClosed ? (
                   <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm font-bold text-amber-200">
@@ -169,14 +188,62 @@ export default async function TournamentDetailPage({
                     </BeyButton>
                   </form>
                 )
+              ) : currentUserJoinRequest?.status === "PENDING" ? (
+                <span className="inline-flex items-center rounded-full border border-sky-300/30 bg-sky-300/10 px-4 py-2 text-sm font-bold text-sky-200">
+                  Awaiting Staff Review
+                </span>
               ) : isFull ? (
                 <span className="inline-flex items-center rounded-full border border-red-400/30 bg-red-400/10 px-4 py-2 text-sm font-bold text-red-300">
                   Tournament Full
                 </span>
               ) : (
-                <form action={registerForTournament}>
+                <form action={requestToJoinTournament} className="space-y-4">
                   <input type="hidden" name="tournamentId" value={tournament.id} />
-                  <BeyButton type="submit">Register Now</BeyButton>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-white">
+                      Why do you want to join? *
+                    </span>
+                    <textarea
+                      name="message"
+                      required
+                      minLength={20}
+                      rows={4}
+                      defaultValue={currentUserJoinRequest?.message ?? ""}
+                      className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-400/50"
+                      placeholder="Share your goals, availability, or anything staff should know."
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="text-sm font-semibold text-white">
+                      Tournament experience
+                    </span>
+                    <textarea
+                      name="experience"
+                      rows={3}
+                      defaultValue={currentUserJoinRequest?.experience ?? ""}
+                      className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-400/50"
+                      placeholder="List previous events, rankings, or first-timer status."
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="text-sm font-semibold text-white">
+                      Preferred build
+                    </span>
+                    <input
+                      name="preferredBuild"
+                      defaultValue={currentUserJoinRequest?.preferredBuild ?? ""}
+                      className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-400/50"
+                      placeholder="Example: Wizard Rod 5-70 Ball"
+                    />
+                  </label>
+
+                  <BeyButton type="submit">
+                    {currentUserJoinRequest?.status === "REJECTED"
+                      ? "Resubmit Request"
+                      : "Submit Request"}
+                  </BeyButton>
                 </form>
               )}
             </div>
